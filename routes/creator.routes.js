@@ -1,17 +1,16 @@
 import express, { request, response } from 'express';
-import RecipieModel from '../models/Recipie.model.js';
 import CreatorModel from '../models/Creator.model.js';
+import RecipieModel from '../models/Recipie.model.js';
 
 const router = express.Router();
-
 
 
 //GET
 router.get('/', async (request, response) => {
     try {
-        const recipies = await RecipieModel.find();
+        const creator = await CreatorModel.find();
 
-        return response.status(200).json(recipies);
+        return response.status(200).json(creator);
 
     } catch {
         console.log(error);
@@ -27,9 +26,9 @@ router.get('/:id', async (request, response) => {
 
         const { id } = request.params;
 
-    const recipie = await RecipieModel.findById(id);
+    const Creator = await CreatorModel.findById(id);
 
-    if(!recipie) {
+    if(!Creator) {
         return response.status(404).json("A receita não foi encontrada");
     }
 
@@ -43,25 +42,12 @@ router.get('/:id', async (request, response) => {
 });
 
 //POST
-router.post('/create/:creatorId', async (request, response) => {
+router.post('/create/', async (request, response) => {
     try {
-
-        const { creatorId } = request.params;
-
-        const create = await RecipieModel.create(
-            {
-            ...request.body,
-            creator: creatorId
-            }
-        );
         
-       await CreatorModel.findByIdAndUpdate (
-        creatorId,
-        { $push: { recipies: create._id } }
-
-       );
+        const newCreator = await CreatorModel.create(request.body);
     
-        return response.status(201).json(create);
+        return response.status(201).json(newCreator);
 
     } catch (error) {
         console.log(error);
@@ -76,7 +62,7 @@ router.put('/edit/:id', async (request, response) => {
     try {
         const { id } = request.params;
                                       
-        const update = await RecipieModel.findByIdAndUpdate(
+        const update = await CreatorModel.findByIdAndUpdate(
 
             id, 
             { ...request.body },
@@ -103,14 +89,9 @@ router.delete('/delete/:id', async (request, response) => {
     try {
         const { id } = request.params
 
-        const deleteRecipie = await RecipieModel.findByIdAndDelete(id);
-
-        await CreatorModel.findByIdAndUpdate(
-            deleteRecipie.creator,
-            { $pull: { recipies: deleteRecipie._id } }
-        )
+        const deleteCreator = await CreatorModel.findByIdAndDelete(id);
     
-        return response.status(200).json(deleteRecipie)
+        return response.status(200).json(deleteCreator)
 
     } catch {
         console.log(error);
@@ -123,8 +104,8 @@ router.delete('/delete/:id', async (request, response) => {
 //DELETE MANY
 router.delete('/deleteall', async (request, response) => {
     try {
-        const deleteAllRecipies = await RecipieModel.deleteMany();
-        return response.status(200).json(deleteAllRecipies);
+        const deleteAllCreators = await CreatorModel.deleteMany();
+        return response.status(200).json(deleteAllCreators);
 
     } catch {
         console.log(error);
@@ -134,5 +115,3 @@ router.delete('/deleteall', async (request, response) => {
 });
 
 export default router;
-
-

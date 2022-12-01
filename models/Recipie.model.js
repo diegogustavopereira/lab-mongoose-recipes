@@ -35,13 +35,13 @@ const recipieSchema = new Schema(
       min: 0
     },
     creator: {
-      type: String
-    },
-    created: {
-      type: Date,
-      default: Date.now
-    } 
-}
+      type: Schema.Types.ObjectId,
+      ref: "Creator"
+    }
+  },
+  {
+    timestamps: true
+  }
 );
 
 // const Recipe = mongoose.model('Recipe', recipeSchema);
